@@ -5,6 +5,7 @@
 
 #include "config.h"
 #include "database.h"
+#include "query.h"
 
 static int load_module   (void);
 static int reload_module (void);
@@ -50,6 +51,7 @@ load_module (void)
 
   config_init ();
   database_init ();
+  query_init ();
 
   ast_cli_register (&cli_entry);
 
@@ -74,6 +76,7 @@ unload_module (void)
 {
   ast_log (LOG_NOTICE, "Unloading " AST_MODULE " module " VERSION "\n");
 
+  query_clean ();
   database_clean ();
   config_clean ();
 

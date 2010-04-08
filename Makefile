@@ -1,8 +1,8 @@
 MODULE = app_my.so
 VERSION = 0.1
 
-HEADERS = config.h database.h
-SOURCES = config.c database.c app_my.c
+HEADERS = config.h database.h query.h
+SOURCES = config.c database.c query.c app_my.c
 OBJECTS = $(SOURCES:%.c=%.o)
 VSCRIPT = $(MODULE:%.so=%.ver)
 
