@@ -44,7 +44,7 @@ set_vars (struct ast_channel *chan,
   MYSQL_FIELD *fields;
   MYSQL_ROW row;
   unsigned i;
-  char var_name[20];
+  char var_name[20] = "MY_";
 
   num_fields = mysql_num_fields (result);
   fields = mysql_fetch_fields (result);
@@ -52,7 +52,7 @@ set_vars (struct ast_channel *chan,
 
   for (i = 0; i < num_fields; i++)
     {
-      prepare_var_name (fields[i].name, var_name, sizeof (var_name));
+      prepare_var_name (fields[i].name, var_name + 3, sizeof (var_name) - 3);
       pbx_builtin_setvar_helper (chan, var_name, row[i] ? row[i] : "");
 
       if (option_verbose > 2)
