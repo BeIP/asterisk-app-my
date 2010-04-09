@@ -70,7 +70,11 @@ app_my_select_exec (struct ast_channel *chan,
   unsigned num_rows;
   
   mysql = database_get ();
-  ensure_mysql_connection (mysql);
+  if (!ensure_mysql_connection (mysql))
+    {
+      database_release (mysql);
+      return -1;
+    }
 
   res = mysql_query (mysql, data);
   if (res != 0)
