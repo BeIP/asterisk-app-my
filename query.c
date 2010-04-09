@@ -104,6 +104,47 @@ app_my_select_exec (struct ast_channel *chan,
   return res;
 }
 
+/****************************************************************************
+ * MY_ESC function                                                          *
+ ****************************************************************************/
+
+static int
+func_my_esc_read (struct ast_channel *chan,
+                  const char         *cmd,
+                  char               *data,
+                  char               *buf,
+                  size_t              len)
+{
+  char *tmpbuf;
+  size_t data_len;
+  size_t max_len;
+  MYSQL *mysql;
+  unsigned esc_len = 0;
+
+  data_len = strlen (data);
+  max_len = data_len * 2 + 1;
+
+  tmpbuf = (len >= max_len) ? buf : alloca (max_len);
+
+  mysql = database_get ();
+  if (ensure_mysql_connection (mysql))
+    {
+      esc_len = mysql_real_escape_string (mysql, tmpbuf, data, data_len);
+      database_release (mysql);
+    }
+  else
+    {
+      database_release (mysql);
+      return -1;
+    }
+
+  if (esc_len != 0 && buf != tmpbuf)
+    memcpy (buf, tmpbuf, esc_len);
+  buf[esc_len] = '\0';
+
+  return 0;
+}
+
 
 /*****************************************************************************
  * Initialization functions                                                  *
@@ -113,18 +154,23 @@ static char *app = "MySelect";
 static char *synopsis = "Select some values in the SQL database";
 static char *descrip = "MySelect(query)\n";
 
+static struct ast_custom_function func_my_esc = {
+  .name = "MY_ESC",
+  .read = func_my_esc_read,
+};
+
 void
 query_init (const struct ast_module_info *ast_module_info)
 {
-  if (option_verbose > 2)
-    ast_verbose (VERBOSE_PREFIX_2 "query_init: registering application %s\n", app);
   ast_register_application (app, app_my_select_exec, synopsis, descrip);
+  ast_custom_function_register(&func_my_esc);
 }
 
 void
 query_clean (void)
 {
   ast_unregister_application (app);
+  ast_custom_function_unregister(&func_my_esc);
 }
 
 /* ex:set ts=2 et sw=2 ai: */
