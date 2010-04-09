@@ -78,7 +78,11 @@ app_my_select_exec (struct ast_channel *chan,
 
   res = mysql_query (mysql, data);
   if (res != 0)
-    return res;
+    {
+      ast_log (LOG_WARNING, "[%d] %s\n", mysql_errno (mysql), mysql_error (mysql));
+      database_release (mysql);
+      return -1;
+    }
 
   result = mysql_store_result (mysql);
   num_rows = mysql_num_rows (result);
