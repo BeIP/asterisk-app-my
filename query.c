@@ -98,19 +98,22 @@ app_my_select_exec (struct ast_channel *chan,
  * Initialization functions                                                  *
  *****************************************************************************/
 
+static char *app = "MySelect";
+static char *synopsis = "Select some values in the SQL database";
+static char *descrip = "MySelect(query)\n";
+
 void
-query_init (void)
+query_init (const struct ast_module_info *ast_module_info)
 {
-  ast_register_application ("MySelect",
-                            app_my_select_exec,
-                            "Select some values in the SQL database",
-                            "MySelect(query)\n");
+  if (option_verbose > 2)
+    ast_verbose (VERBOSE_PREFIX_2 "query_init: registering application %s\n", app);
+  ast_register_application (app, app_my_select_exec, synopsis, descrip);
 }
 
 void
 query_clean (void)
 {
-  ast_unregister_application ("MySelect");
+  ast_unregister_application (app);
 }
 
 /* ex:set ts=2 et sw=2 ai: */

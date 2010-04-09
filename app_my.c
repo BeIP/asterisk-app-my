@@ -51,7 +51,7 @@ load_module (void)
 
   config_init ();
   database_init ();
-  query_init ();
+  query_init (ast_module_info);
 
   ast_cli_register (&cli_entry);
 
