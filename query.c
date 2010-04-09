@@ -80,8 +80,11 @@ app_my_select_exec (struct ast_channel *chan,
   if (res != 0)
     return res;
 
-  result = mysql_use_result (mysql);
+  result = mysql_store_result (mysql);
   num_rows = mysql_num_rows (result);
+
+  if (option_verbose >= 4)
+    ast_verbose (VERBOSE_PREFIX_4 "my_select: Query returned %d rows\n", num_rows);
 
   /* Fetch the result and set the variables. */
   if (num_rows >= 1)
