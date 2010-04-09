@@ -12,7 +12,7 @@
 #include "database.h"
 
 /*****************************************************************************
- * SELECT application.                                                       *
+ * MyQuery application                                                       *
  *****************************************************************************/
 
 static void
@@ -61,8 +61,8 @@ set_vars (struct ast_channel *chan,
 }
 
 static int
-app_my_select_exec (struct ast_channel *chan,
-                    void               *data)
+app_my_query_exec (struct ast_channel *chan,
+                   void               *data)
 {
   int res = 0;
   MYSQL *mysql;
@@ -82,8 +82,8 @@ app_my_select_exec (struct ast_channel *chan,
   if (result != NULL)
     {
       unsigned num_rows = mysql_num_rows (result);
-      if (option_verbose >= 4)
-        ast_verbose (VERBOSE_PREFIX_4 "my_select: Query returned %d rows\n", num_rows);
+      if (option_verbose >= 4 && num_rows != 1)
+        ast_verbose (VERBOSE_PREFIX_4 "my_query: Query returned %d rows\n", num_rows);
 
       /* Fetch the result and set the variables. */
       if (num_rows >= 1)
@@ -97,7 +97,7 @@ app_my_select_exec (struct ast_channel *chan,
   else if (mysql_field_count (mysql) == 0)
     {
       if (option_verbose >= 4)
-        ast_verbose (VERBOSE_PREFIX_4 "my_select: Query didn't return anything\n");
+        ast_verbose (VERBOSE_PREFIX_4 "my_query: Query didn't return anything\n");
     }
   else
     {
@@ -155,9 +155,9 @@ func_my_esc_read (struct ast_channel *chan,
  * Initialization functions                                                  *
  *****************************************************************************/
 
-static char *app = "MySelect";
-static char *synopsis = "Select some values in the SQL database";
-static char *descrip = "MySelect(query)\n";
+static char *app = "MyQuery";
+static char *synopsis = "Run a query on a SQL database";
+static char *descrip = "MyQuery(query)\n";
 
 static struct ast_custom_function func_my_esc = {
   .name = "MY_ESC",
@@ -167,7 +167,7 @@ static struct ast_custom_function func_my_esc = {
 void
 query_init (const struct ast_module_info *ast_module_info)
 {
-  ast_register_application (app, app_my_select_exec, synopsis, descrip);
+  ast_register_application (app, app_my_query_exec, synopsis, descrip);
   ast_custom_function_register(&func_my_esc);
 }
 
