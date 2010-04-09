@@ -66,8 +66,7 @@ app_my_select_exec (struct ast_channel *chan,
 {
   int res = 0;
   MYSQL *mysql;
-  MYSQL_RES *result;
-  unsigned num_rows;
+  MYSQL_RES *result = NULL;
   
   mysql = database_get ();
   if (!ensure_mysql_connection (mysql))
@@ -77,30 +76,36 @@ app_my_select_exec (struct ast_channel *chan,
     }
 
   res = mysql_query (mysql, data);
-  if (res != 0)
+  if (res == 0)
+    result = mysql_store_result (mysql);
+
+  if (result != NULL)
+    {
+      unsigned num_rows = mysql_num_rows (result);
+      if (option_verbose >= 4)
+        ast_verbose (VERBOSE_PREFIX_4 "my_select: Query returned %d rows\n", num_rows);
+
+      /* Fetch the result and set the variables. */
+      if (num_rows >= 1)
+        set_vars (chan, result);
+
+      /* Discard the eventual remaining rows */
+      if (num_rows > 1)
+        while (mysql_fetch_row (result));
+      mysql_free_result (result);
+    }
+  else if (mysql_field_count (mysql) == 0)
+    {
+      if (option_verbose >= 4)
+        ast_verbose (VERBOSE_PREFIX_4 "my_select: Query didn't return anything\n");
+    }
+  else
     {
       ast_log (LOG_WARNING, "[%d] %s\n", mysql_errno (mysql), mysql_error (mysql));
-      database_release (mysql);
-      return -1;
+      res = -1;
     }
 
-  result = mysql_store_result (mysql);
-  num_rows = mysql_num_rows (result);
-
-  if (option_verbose >= 4)
-    ast_verbose (VERBOSE_PREFIX_4 "my_select: Query returned %d rows\n", num_rows);
-
-  /* Fetch the result and set the variables. */
-  if (num_rows >= 1)
-    set_vars (chan, result);
-
-  /* Discard the eventual remaining rows */
-  if (num_rows > 1)
-    while (mysql_fetch_row (result));
-  mysql_free_result (result);
-
   database_release (mysql);
-
   return res;
 }
 
