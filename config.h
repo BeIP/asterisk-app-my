@@ -1,3 +1,8 @@
+/* app_my: damn simple MySQL application for asterisk
+ * Copyright (C) 2010 - Steve Frécinaux
+ * Licensed under the GPL2+
+ */
+
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 

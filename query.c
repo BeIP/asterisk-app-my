@@ -1,3 +1,8 @@
+/* app_my: damn simple MySQL application for asterisk
+ * Copyright (C) 2010 - Steve Frécinaux
+ * Licensed under the GPL2+
+ */
+
 #include <asterisk.h>
 #include <asterisk/linkedlists.h>
 #include <asterisk/app.h>
