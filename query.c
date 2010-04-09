@@ -55,8 +55,8 @@ set_vars (struct ast_channel *chan,
       prepare_var_name (fields[i].name, var_name + 3, sizeof (var_name) - 3);
       pbx_builtin_setvar_helper (chan, var_name, row[i] ? row[i] : "");
 
-      if (option_verbose > 2)
-        ast_verbose (VERBOSE_PREFIX_2 "set_vars: %s = %s\n", var_name, row[i] ? row[i] : "");
+      if (option_verbose > 4)
+        ast_verbose (VERBOSE_PREFIX_4 "Set variable %s = %s\n", var_name, row[i] ? row[i] : "");
     }
 }
 
@@ -82,8 +82,6 @@ app_my_query_exec (struct ast_channel *chan,
   if (result != NULL)
     {
       unsigned num_rows = mysql_num_rows (result);
-      if (option_verbose >= 4 && num_rows != 1)
-        ast_verbose (VERBOSE_PREFIX_4 "my_query: Query returned %d rows\n", num_rows);
 
       /* Fetch the result and set the variables. */
       if (num_rows >= 1)
@@ -93,13 +91,11 @@ app_my_query_exec (struct ast_channel *chan,
       if (num_rows > 1)
         while (mysql_fetch_row (result));
       mysql_free_result (result);
-    }
-  else if (mysql_field_count (mysql) == 0)
-    {
+      
       if (option_verbose >= 4)
-        ast_verbose (VERBOSE_PREFIX_4 "my_query: Query didn't return anything\n");
+        ast_verbose (VERBOSE_PREFIX_4 "MySQL Query returned %d rows\n", num_rows);
     }
-  else
+  else if (mysql_field_count (mysql) != 0)
     {
       ast_log (LOG_WARNING, "[%d] %s\n", mysql_errno (mysql), mysql_error (mysql));
       res = -1;

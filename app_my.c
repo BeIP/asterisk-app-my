@@ -1,6 +1,5 @@
 #include <asterisk.h>
 #include <asterisk/cli.h>
-#include <asterisk/logger.h>
 #include <asterisk/module.h>
 
 #include "config.h"
@@ -47,8 +46,6 @@ ASTERISK_FILE_VERSION (__FILE__, VERSION)
 static int
 load_module (void)
 {
-  ast_log (LOG_NOTICE, "Loading " AST_MODULE " module " VERSION "\n");
-
   config_init ();
   database_init ();
   query_init (ast_module_info);
@@ -61,12 +58,8 @@ load_module (void)
 static int
 reload_module (void)
 {
-  ast_log (LOG_NOTICE, "Reloading " AST_MODULE " module " VERSION ".\n");
-
   config_reset ();
   database_reset ();
-
-  ast_log (LOG_NOTICE, AST_MODULE " module " VERSION " reloaded.\n");
 
   return 0;
 }
@@ -74,8 +67,6 @@ reload_module (void)
 static int
 unload_module (void)
 {
-  ast_log (LOG_NOTICE, "Unloading " AST_MODULE " module " VERSION "\n");
-
   query_clean ();
   database_clean ();
   config_clean ();
