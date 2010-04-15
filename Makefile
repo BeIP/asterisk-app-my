@@ -23,7 +23,5 @@ clean:
 install:
 	install -d $(DESTDIR)/usr/lib/asterisk/modules
 	cp -a $(MODULE) $(DESTDIR)/usr/lib/asterisk/modules
-	install -d $(DESTDIR)/var/lib/asterisk/agi-bin
-	install -m 755 $(AGI) $(DESTDIR)/var/lib/asterisk/agi-bin
 
 .PHONY: all install clean
