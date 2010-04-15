@@ -1,0 +1,25 @@
+app_my: damn simple MySQL application for asterisk
+Copyright (C) 2010 - Steve Frécinaux
+Licensed under the GPL2+
+
+What is it?
+-----------
+
+app_my provides the most commonly used subset of app_mysql's feature set.
+It currently only provides one application, MyQuery, and one function, MY_ESC.
+A few commands are also available; they have the "my" prefix.
+
+MyQuery:
+  MyQuery("query") will perform the SQL query given as the argument. If the
+  query returns a SELECT-like recordset, then MyQuery will export those as
+  channel variables. Other rows will be ignored silently.
+
+  Example: "SELECT foo, bar FROM table" will result in the following variables
+  to be exported: MY_FOO and MY_BAR.
+
+MY_ESC:
+  MY_ESC("foo") will escape the provided text so it can be used within a query.
+
+Configuration
+-------------
+app_my curently steals the configuration from cdr_mysql.conf.
