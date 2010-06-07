@@ -19,14 +19,13 @@ struct my_config config = { 0 };
 void
 config_init (void)
 {
-  struct ast_flags config_flags = { 0 };
   struct ast_config *cfg = NULL;
   struct ast_variable *var = NULL;
   const char *value = NULL;
 
   memset (&config, 0, sizeof (struct my_config));
 
-  cfg = ast_config_load (CONFIG_FILE, config_flags);
+  cfg = ast_config_load (CONFIG_FILE);
   if (!cfg)
     ast_log (LOG_WARNING, AST_MODULE ": Unable to load " CONFIG_FILE "\n");
   else

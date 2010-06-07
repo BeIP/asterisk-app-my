@@ -132,24 +132,13 @@ drop_mysql_connection (MYSQL *mysql)
  * CLI                                                                       *
  *****************************************************************************/
 
-static char *
-handle_cli_my_show_status (struct ast_cli_entry *e,
-                           int cmd,
-                           struct ast_cli_args *a)
+static int
+handle_cli_my_show_status (int    fd,
+                           int    argc,
+                           char **argv)
 {
-  switch (cmd)
-    {
-      case CLI_INIT:
-        e->command = "my show status";
-        e->usage = "Show the status of the MySQL connection.\n";
-        return NULL;
-
-      case CLI_GENERATE:
-        return NULL;
-
-      default:
-        break;
-    }
+  if (argc != 3)
+    return RESULT_SHOWUSAGE;
 
   /* Refresh the connection status. */
   if (connected && mysql_ping (&mysql) != 0)
@@ -191,17 +180,21 @@ handle_cli_my_show_status (struct ast_cli_entry *e,
           snprintf (timestr, sizeof (timestr), "%d seconds", ctime);
         }
 
-      ast_cli(a->fd, "%s%s for %s.\n", status, status2, timestr);
+      ast_cli(fd, "%s%s for %s.\n", status, status2, timestr);
     }
   else
     {
-      ast_cli (a->fd, "Not currently connected to a MySQL server.\n");
+      ast_cli (fd, "Not currently connected to a MySQL server.\n");
     }
 
   return RESULT_SUCCESS;
 }
 
-static struct ast_cli_entry cli_entry = AST_CLI_DEFINE (handle_cli_my_show_status, "Shows database status");
+static struct ast_cli_entry cli_entry = {
+  { "my", "show", "status", NULL  },
+  handle_cli_my_show_status,
+  "Shows database status"
+};
 
 void
 database_init (void)

@@ -19,28 +19,23 @@ static int unload_module (void);
  * CLI                                                                       *
  *****************************************************************************/
 
-static char *
-handle_cli_my_reload (struct ast_cli_entry *e,
-                      int cmd,
-                      struct ast_cli_args *a)
+static int
+handle_cli_my_reload (int    fd,
+                      int    argc,
+                      char **argv)
 {
-  switch (cmd)
-    {
-      case CLI_INIT:
-        e->command = "my reload";
-        e->usage = "Reload the mysql application configuration";
-        return NULL;
+  if (argc != 2)
+    return RESULT_SHOWUSAGE;
 
-      case CLI_GENERATE:
-        return NULL;
-
-      default:
-        reload_module ();
-        return CLI_SUCCESS;
-    }
+  reload_module ();
+  return RESULT_SUCCESS;
 }
 
-static struct ast_cli_entry cli_entry = AST_CLI_DEFINE (handle_cli_my_reload, "Reload the mysql application");
+static struct ast_cli_entry cli_entry = {
+  { "my", "reload", NULL },
+  handle_cli_my_reload,
+  "Reload the mysql application"
+};
 
 /*****************************************************************************
  * Module                                                                    *
