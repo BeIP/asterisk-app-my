@@ -10,6 +10,7 @@
 #include "config.h"
 #include "database.h"
 #include "query.h"
+#include "auth.h"
 
 static int load_module   (void);
 static int reload_module (void);
@@ -49,6 +50,7 @@ load_module (void)
   config_init ();
   database_init ();
   query_init (ast_module_info);
+  auth_init (ast_module_info);
 
   ast_cli_register (&cli_entry);
 
@@ -67,6 +69,7 @@ reload_module (void)
 static int
 unload_module (void)
 {
+  auth_clean ();
   query_clean ();
   database_clean ();
   config_clean ();
