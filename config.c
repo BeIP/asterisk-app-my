@@ -14,7 +14,7 @@
 #include "config.h"
 struct my_config config = { 0 };
 
-#define CONFIG_FILE "cdr_mysql.conf"
+#define CONFIG_FILE "my.conf"
 
 void
 config_init (void)
