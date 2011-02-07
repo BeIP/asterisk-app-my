@@ -41,6 +41,18 @@ config_init (void)
   config.hostname = ast_strdup (value);
 
   if (var)
+    value = ast_variable_retrieve (cfg, "global", "port");
+  if (!value)
+    {
+      ast_log (LOG_WARNING, "MySQL server port not specified.  Assuming 3306\n");
+      config.port = 3306;
+    }
+  else
+    {
+      config.port = atoi (value);
+    }
+
+  if (var)
     value = ast_variable_retrieve (cfg, "global", "user");
   if (!value)
     {

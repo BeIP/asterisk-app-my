@@ -73,7 +73,7 @@ db_reconnect:
         ast_log_mysql_error ("mysql_options");
 #endif
       if (mysql_real_connect (mysql, config.hostname, config.username, config.password,
-                              config.database, 0, NULL, 0))
+                              config.database, config.port, NULL, 0))
         {
           connected = 1;
           connect_time = time (NULL);

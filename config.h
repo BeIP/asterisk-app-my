@@ -8,6 +8,7 @@
 
 struct my_config {
   char *hostname;
+  int port;
   char *username;
   char *password;
   char *database;
